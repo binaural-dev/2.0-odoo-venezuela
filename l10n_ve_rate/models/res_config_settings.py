@@ -11,6 +11,13 @@ class ResConfigSettings(models.TransientModel):
         default=lambda self: self.env.company,
     )
 
+    currency_id = fields.Many2one(
+        "res.currency",
+        string="Currency",
+        required=True,
+        default=lambda self: self.env.ref("base.VEF").id,
+    )
+
     currency_foreign_id = fields.Many2one(
         "res.currency",
         string="Currency Foreign",
@@ -35,4 +42,13 @@ class ResConfigSettings(models.TransientModel):
             if "currency_id" in rec._fields and rec.currency_id == rec.currency_foreign_id:
                 raise UserError(
                     _("The currency foreign must be different from the currency of the company")
+                )
+
+    @api.constrains("currency_id")
+    def _check_currency_id(self):
+        self = self.with_company(self.company_id)
+        for rec in self:
+            if "currency_id" in rec._fields and rec.currency_id != self.env.ref("base.VEF"):
+                raise UserError(
+                    _("The company currency must be in bolivars. Please set the currency to Bolivar (VEF).")
                 )
