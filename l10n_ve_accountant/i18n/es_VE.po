@@ -1155,13 +1155,6 @@ msgstr "Solo puedes registrar pagos para una tasa alterna a la vez."
 
 #. module: l10n_ve_accountant
 #. odoo-python
-#: code:addons/l10n_ve_accountant/models/account_move.py:0
-#, python-format
-msgid "You cannot place a currency other than the base of the system."
-msgstr "No puede colocar una moneda que no sea la base del sistema."
-
-#. module: l10n_ve_accountant
-#. odoo-python
 #: code:addons/l10n_ve_accountant/models/account_journal.py:0
 #, python-format
 msgid "You do not have permissions to create/update a journal with this type."
