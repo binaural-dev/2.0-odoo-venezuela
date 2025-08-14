@@ -76,13 +76,6 @@ class SaleOrder(models.Model):
         store=True,
     )
 
-    pricelist_id = fields.Many2one(
-        domain=lambda self: (
-            "[('company_id', 'in', (company_id, False)),"
-            f"('currency_id', '=', {self.env.company.currency_id.id})]"
-        )
-    )
-
     address = fields.Char(related="partner_id.street")
 
     mobile = fields.Char(related="partner_id.mobile")
@@ -358,24 +351,6 @@ class SaleOrder(models.Model):
                 % ({"rate": self.foreign_rate, "last_rate": self.last_foreign_rate})
             )
         return res
-
-    @api.onchange("pricelist_id")
-    def _onchange_pricelist_id(self):
-        """
-        Recalculate the prices of the products in the purchase order when the rate changes.
-        """
-        try:
-            record = self if isinstance(self.id, int) else self._origin
-            record._recompute_prices()
-            if self.pricelist_id:
-                record.message_post(
-                    body=_(
-                        "Product prices have been recomputed according to pricelist %s.",
-                        self.pricelist_id._get_html_link(),
-                    )
-                )
-        except Exception:
-            self._recompute_prices()
 
     def _block_valid_confirm(self):
         self.ensure_one()
